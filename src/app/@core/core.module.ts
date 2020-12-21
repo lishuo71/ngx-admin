@@ -1,6 +1,6 @@
 import { ModuleWithProviders, NgModule, Optional, SkipSelf } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NbAuthModule, NbDummyAuthStrategy } from '@nebular/auth';
+import { NbAuthJWTInterceptor, NbAuthModule, NbDummyAuthStrategy, NB_AUTH_TOKEN_INTERCEPTOR_FILTER } from '@nebular/auth';
 import { NbSecurityModule, NbRoleProvider } from '@nebular/security';
 import { of as observableOf } from 'rxjs';
 
@@ -12,7 +12,6 @@ import {
   SeoService,
   StateService,
 } from './utils';
-import { UserData } from './data/users';
 import { ElectricityData } from './data/electricity';
 import { SmartTableData } from './data/smart-table';
 import { UserActivityData } from './data/user-activity';
@@ -32,7 +31,6 @@ import { StatsProgressBarData } from './data/stats-progress-bar';
 import { VisitorsAnalyticsData } from './data/visitors-analytics';
 import { SecurityCamerasData } from './data/security-cameras';
 
-import { UserService } from './mock/users.service';
 import { ElectricityService } from './mock/electricity.service';
 import { SmartTableService } from './mock/smart-table.service';
 import { UserActivityService } from './mock/user-activity.service';
@@ -52,6 +50,29 @@ import { StatsProgressBarService } from './mock/stats-progress-bar.service';
 import { VisitorsAnalyticsService } from './mock/visitors-analytics.service';
 import { SecurityCamerasService } from './mock/security-cameras.service';
 import { MockDataModule } from './mock/mock-data.module';
+import { ProductData } from './interface/products';
+import { ProductService } from './service/products.service';
+import { UsersApi } from './api/users.api';
+import { ProductsApi } from './api/products.api';
+import { HttpService } from './api/http.service';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { StockData } from './interface/stocks';
+import { StocksApi } from './api/stocks.api';
+import { StockService } from './service/stocks.service';
+import { UserService } from './service/users.service';
+import { UserData } from './interface/users';
+import { OrdersApi } from './api/orders.api';
+import { OrderData } from './interface/orders';
+import { OrderService } from './service/orders.service';
+import { FavorsApi } from './api/favors.api';
+import { FavorService } from './service/favors.service';
+import { FavorData } from './interface/favors';
+import { MessagesApi } from './api/messages.api';
+import { MessageService } from './service/messages.service';
+import { MessageData } from './interface/messages';
+import { HistoryApi } from './api/history.api';
+import { HistoryService } from './service/history.service';
+import { HistoryData } from './interface/history';
 
 const socialLinks = [
   {
@@ -70,6 +91,7 @@ const socialLinks = [
     icon: 'twitter',
   },
 ];
+const API = [HttpService,ProductsApi,StocksApi,UsersApi,OrdersApi,FavorsApi,MessagesApi,HistoryApi];
 
 const DATA_SERVICES = [
   { provide: UserData, useClass: UserService },
@@ -91,6 +113,14 @@ const DATA_SERVICES = [
   { provide: StatsProgressBarData, useClass: StatsProgressBarService },
   { provide: VisitorsAnalyticsData, useClass: VisitorsAnalyticsService },
   { provide: SecurityCamerasData, useClass: SecurityCamerasService },
+  { provide: ProductData, useClass: ProductService },
+  { provide: StockData, useClass: StockService },
+  { provide: UserData, useClass: UserService },
+  { provide: OrderData, useClass: OrderService },
+  { provide: FavorData, useClass: FavorService },
+  { provide: MessageData, useClass: MessageService },
+  { provide: HistoryData, useClass: HistoryService },
+  { provide: HTTP_INTERCEPTORS, useClass: NbAuthJWTInterceptor, multi: true },
 ];
 
 export class NbSimpleRoleProvider extends NbRoleProvider {
@@ -103,6 +133,7 @@ export class NbSimpleRoleProvider extends NbRoleProvider {
 export const NB_CORE_PROVIDERS = [
   ...MockDataModule.forRoot().providers,
   ...DATA_SERVICES,
+  ...API,
   ...NbAuthModule.forRoot({
 
     strategies: [

@@ -1,24 +1,19 @@
+import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
-import { ProductData } from 'app/@core/interface/products';
-import { LocalDataSource, ServerDataSource } from 'ng2-smart-table';
+import { FavorData } from 'app/@core/interface/favors';
 import { DataSource } from 'ng2-smart-table/lib/lib/data-source/data-source';
 
 import { SmartTableData } from '../../../@core/data/smart-table';
 
 @Component({
-  selector: 'ngx-smart-table',
-  templateUrl: './smart-table.component.html',
-  styleUrls: ['./smart-table.component.scss'],
+  selector: 'ngx-favors',
+  templateUrl: './favors.component.html',
+  styleUrls: ['./favors.component.scss'],
 })
-export class SmartTableComponent {
-
-  markets = [
-    {value: 0, title: 'A股'},
-    {value: 1, title: '港股'},
-    {value: 2, title: '美股'},
-    {value: 3, title: 'A股股指'},
-    {value: 4, title: '港股股指'},
-    {value: 5, title: '美股股指'}
+export class FavorComponent {
+  valids = [
+    {value: true, title: '有效'},
+    {value: false, title: '无效'},
   ];
 
   settings = {
@@ -41,71 +36,66 @@ export class SmartTableComponent {
     columns: {
       id: {
         title: 'ID',
-        type: 'number',
         editable: false,
         filter: false
       },
-      name: {
-        title: '名称',
-        type: 'string',
-        filter: false
-      },
-      price: {
-        title: '价格(元)',
-        type: 'number',
-        filter: false
-      },
-      listprice: {
-        title: '原价(元)',
-        type: 'number',
-        filter: false
-      },
-      period: {
-        title: '有效期(天)',
-        type: 'number',
-        filter: false
-      },
-      limit: {
-        title: '订阅数(个)',
-        type: 'number',
-        filter: false
-      },
-      description: {
-        title: '描述',
-        type: 'string',
+      userId: {
+        title: '用户',
+        editable: false,
         filter: false,
-        editor: {
-          type: 'textarea',
+        valuePrepareFunction: (cell,row) => { 
+          return row.login.realName; 
         }
       },
-      memo: {
-        title: '副标题',
-        type: 'string',
-        filter: false
-      },
-      market: {
-        title: '市场',
-        type: 'number',
+      stock: {
+        title: '服务名称',
+        editable: false,
         filter: false,
+        valuePrepareFunction: (cell,row) => { 
+          return row.favors.stock.code + " "+ row.favors.stock.name; 
+        }
+      },
+      subscribeTime: {
+        title: '订阅时间',
+        editable: false,
+        filter: false,
+        valuePrepareFunction: (cell,row) => { 
+          return row.favors.subscribeTime? new DatePipe('en-US').transform(row.favors.subscribeTime, 'yyyy-MM-dd HH:mm:ss') :""; 
+        }
+      },
+      valid: {
+        title: '是否有效',
+        editable: false,
+        filter: {
+          type: 'checkbox',
+          config: {
+            true: '1',
+            false: '0',
+            resetText: '取消选择',
+          },
+        },
         editor: {
           type: 'list',
           config: {
-            list: this.markets
+            list: this.valids
           }
         },
-        valuePrepareFunction: (market) => {
-          return this.getMarketName(market);
+        valuePrepareFunction: (cell,row) => {
+          return this.getValidName(row.favors.valid);
         }
       },
     },
     actions: {
-      columnTitle: '操作'
+      columnTitle: '操作',
+      add: true,
+      edit: true,
+      delete: true,
     }
   };
 
   source: DataSource ;
 
-  constructor(private service: ProductData) {
+  constructor(private service: FavorData) {
     this.source = service.gridDataSource;
   }
 
@@ -150,16 +140,11 @@ export class SmartTableComponent {
     }
   }
 
-  getMarketName(market: number) {
-    //console.log("market:" + market);
-    if (market == null) {
-      return;
-    }
-    let m = this.markets.find(element => element.value==market );
-    if (m) {
-      return m.title;
+  getValidName(valid: boolean){
+    if (valid) {
+      return "有效";
     } else {
-      return market;
+      return "无效";
     }
   }
 }

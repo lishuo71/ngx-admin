@@ -11,6 +11,9 @@ import { CoreModule } from './@core/core.module';
 import { ThemeModule } from './@theme/theme.module';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
+import { NbPasswordAuthStrategy, NbAuthModule, NbAuthJWTToken, NB_AUTH_TOKEN_INTERCEPTOR_FILTER } from '@nebular/auth';
+import { AuthGuard } from './auth-guard.service';
+
 import {
   NbChatModule,
   NbDatepickerModule,
@@ -20,6 +23,7 @@ import {
   NbToastrModule,
   NbWindowModule,
 } from '@nebular/theme';
+import { environment } from 'environments/environment';
 
 @NgModule({
   declarations: [AppComponent],
@@ -39,6 +43,32 @@ import {
     }),
     CoreModule.forRoot(),
     ThemeModule.forRoot(),
+    NbAuthModule.forRoot({
+      strategies: [
+        NbPasswordAuthStrategy.setup({
+          name: 'email',
+          baseEndpoint: environment.host,
+          login: {
+            endpoint: '/open/authenticate',
+          },
+          token: {
+            class: NbAuthJWTToken,
+            key: 'token'
+          }
+        }),
+      ],
+      forms: {
+        validation: {
+          email: {
+            required: true,
+          }
+        }
+      }
+    })
+  ],
+  providers: [
+    AuthGuard,
+  { provide: NB_AUTH_TOKEN_INTERCEPTOR_FILTER, useValue: function () { return false; }, },
   ],
   bootstrap: [AppComponent],
 })

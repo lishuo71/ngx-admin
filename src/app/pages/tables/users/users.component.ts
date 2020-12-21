@@ -1,25 +1,16 @@
+import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
-import { ProductData } from 'app/@core/interface/products';
-import { LocalDataSource, ServerDataSource } from 'ng2-smart-table';
+import { UserData } from 'app/@core/interface/users';
 import { DataSource } from 'ng2-smart-table/lib/lib/data-source/data-source';
 
 import { SmartTableData } from '../../../@core/data/smart-table';
 
 @Component({
-  selector: 'ngx-smart-table',
-  templateUrl: './smart-table.component.html',
-  styleUrls: ['./smart-table.component.scss'],
+  selector: 'ngx-users',
+  templateUrl: './users.component.html',
+  styleUrls: ['./users.component.scss'],
 })
-export class SmartTableComponent {
-
-  markets = [
-    {value: 0, title: 'A股'},
-    {value: 1, title: '港股'},
-    {value: 2, title: '美股'},
-    {value: 3, title: 'A股股指'},
-    {value: 4, title: '港股股指'},
-    {value: 5, title: '美股股指'}
-  ];
+export class UserComponent {
 
   settings = {
     add: {
@@ -45,67 +36,49 @@ export class SmartTableComponent {
         editable: false,
         filter: false
       },
-      name: {
-        title: '名称',
+      userName: {
+        title: '登录名',
         type: 'string',
         filter: false
       },
-      price: {
-        title: '价格(元)',
-        type: 'number',
+      realName: {
+        title: '实名/昵称',
+        type: 'string',
         filter: false
       },
-      listprice: {
-        title: '原价(元)',
-        type: 'number',
-        filter: false
-      },
-      period: {
-        title: '有效期(天)',
-        type: 'number',
-        filter: false
-      },
-      limit: {
-        title: '订阅数(个)',
-        type: 'number',
-        filter: false
-      },
-      description: {
-        title: '描述',
+      lastLogin: {
+        title: '最后登录时间',
         type: 'string',
         filter: false,
-        editor: {
-          type: 'textarea',
+        valuePrepareFunction: (lastLoginTime: any) => { 
+          return lastLoginTime? new DatePipe('en-US').transform(lastLoginTime, 'yyyy-MM-dd HH:mm:ss') :""; 
         }
       },
-      memo: {
-        title: '副标题',
+      headimgurl: {
+        title: '头像',
+        filter: false,
+        type: 'html',
+        valuePrepareFunction: (images) => {
+          return `<img class='table-thumbnail-img' src="${images}"/>`
+        }
+      },
+      phone: {
+        title: '手机',
         type: 'string',
         filter: false
-      },
-      market: {
-        title: '市场',
-        type: 'number',
-        filter: false,
-        editor: {
-          type: 'list',
-          config: {
-            list: this.markets
-          }
-        },
-        valuePrepareFunction: (market) => {
-          return this.getMarketName(market);
-        }
       },
     },
     actions: {
-      columnTitle: '操作'
+      columnTitle: '操作',
+      add: true,
+      edit: false,
+      delete: false,
     }
   };
 
   source: DataSource ;
 
-  constructor(private service: ProductData) {
+  constructor(private service: UserData) {
     this.source = service.gridDataSource;
   }
 
@@ -147,19 +120,6 @@ export class SmartTableComponent {
       event.confirm.resolve(event.newData);
     } else {
       event.confirm.reject();
-    }
-  }
-
-  getMarketName(market: number) {
-    //console.log("market:" + market);
-    if (market == null) {
-      return;
-    }
-    let m = this.markets.find(element => element.value==market );
-    if (m) {
-      return m.title;
-    } else {
-      return market;
     }
   }
 }

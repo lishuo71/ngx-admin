@@ -13,6 +13,41 @@ export const MENU_ITEMS: NbMenuItem[] = [
     link: '/pages/iot-dashboard',
   },
   {
+    title: '算法服务',
+    icon: 'gift-outline',
+    link: '/pages/tables/products',
+  },
+  {
+    title: '股票代码',
+    icon: 'keypad-outline',
+    link: '/pages/tables/codes',
+  },
+  {
+    title: '注册用户',
+    icon: 'people-outline',
+    link: '/pages/tables/users',
+  },
+  {
+    title: '订单',
+    icon: 'file-outline',
+    link: '/pages/tables/orders',
+  },
+  {
+    title: '服务订阅',
+    icon: 'star-outline',
+    link: '/pages/tables/favors',
+  },
+  {
+    title: '提示消息',
+    icon: 'bulb-outline',
+    link: '/pages/tables/messages',
+  },
+  {
+    title: '用户消息',
+    icon: 'email-outline',
+    link: '/pages/tables/history',
+  },
+  {
     title: 'FEATURES',
     group: true,
   },

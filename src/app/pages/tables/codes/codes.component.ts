@@ -1,16 +1,13 @@
 import { Component } from '@angular/core';
-import { ProductData } from 'app/@core/interface/products';
-import { LocalDataSource, ServerDataSource } from 'ng2-smart-table';
+import { StockData } from 'app/@core/interface/stocks';
 import { DataSource } from 'ng2-smart-table/lib/lib/data-source/data-source';
 
-import { SmartTableData } from '../../../@core/data/smart-table';
-
 @Component({
-  selector: 'ngx-smart-table',
-  templateUrl: './smart-table.component.html',
-  styleUrls: ['./smart-table.component.scss'],
+  selector: 'ngx-codes',
+  templateUrl: './codes.component.html',
+  styleUrls: ['./codes.component.scss'],
 })
-export class SmartTableComponent {
+export class CodesComponent {
 
   markets = [
     {value: 0, title: 'A股'},
@@ -19,6 +16,11 @@ export class SmartTableComponent {
     {value: 3, title: 'A股股指'},
     {value: 4, title: '港股股指'},
     {value: 5, title: '美股股指'}
+  ];
+
+  valids = [
+    {value: 0, title: '有效'},
+    {value: -1, title: '无效'},
   ];
 
   settings = {
@@ -39,62 +41,54 @@ export class SmartTableComponent {
       confirmDelete: true,
     },
     columns: {
-      id: {
-        title: 'ID',
-        type: 'number',
-        editable: false,
-        filter: false
+      code: {
+        title: '代码',
+        type: 'string',
+        editable: false
       },
       name: {
         title: '名称',
         type: 'string',
-        filter: false
-      },
-      price: {
-        title: '价格(元)',
-        type: 'number',
-        filter: false
-      },
-      listprice: {
-        title: '原价(元)',
-        type: 'number',
-        filter: false
-      },
-      period: {
-        title: '有效期(天)',
-        type: 'number',
-        filter: false
-      },
-      limit: {
-        title: '订阅数(个)',
-        type: 'number',
-        filter: false
-      },
-      description: {
-        title: '描述',
-        type: 'string',
-        filter: false,
-        editor: {
-          type: 'textarea',
-        }
-      },
-      memo: {
-        title: '副标题',
-        type: 'string',
-        filter: false
       },
       market: {
         title: '市场',
         type: 'number',
-        filter: false,
+        filter: {
+          type: 'list',
+          config: {
+            selectText: '选择一个...',
+            list: this.markets,
+          }
+        },
         editor: {
           type: 'list',
           config: {
-            list: this.markets
+            list: this.markets,
           }
         },
         valuePrepareFunction: (market) => {
           return this.getMarketName(market);
+        }
+      },
+      valid: {
+        title: '有效？',
+        type: 'number',
+        filter: {
+          type: 'checkbox',
+          config: {
+            true: '0',
+            false: '-1',
+            resetText: '取消选择',
+          },
+        },
+        editor: {
+          type: 'list',
+          config: {
+            list: this.valids
+          }
+        },
+        valuePrepareFunction: (valid) => {
+          return this.getValidName(valid);
         }
       },
     },
@@ -105,13 +99,13 @@ export class SmartTableComponent {
 
   source: DataSource ;
 
-  constructor(private service: ProductData) {
+  constructor(private service: StockData) {
     this.source = service.gridDataSource;
   }
 
   onDeleteConfirm(event): void {
     if (window.confirm('确定要删除本条数据吗？')) {
-      this.service.delete(event.data.id).subscribe((result)=>{
+      this.service.delete(event.data.code).subscribe((result)=>{
         console.log("delete result: " + JSON.stringify(result));
         if (result.code != 0) {
           alert("删除失败：" + result.message);
@@ -160,6 +154,14 @@ export class SmartTableComponent {
       return m.title;
     } else {
       return market;
+    }
+  }
+
+  getValidName(valid: number){
+    if (valid == 0) {
+      return "有效";
+    } else {
+      return "无效";
     }
   }
 }

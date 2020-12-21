@@ -1,25 +1,16 @@
+import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
-import { ProductData } from 'app/@core/interface/products';
-import { LocalDataSource, ServerDataSource } from 'ng2-smart-table';
+import { MessageData } from 'app/@core/interface/messages';
 import { DataSource } from 'ng2-smart-table/lib/lib/data-source/data-source';
 
 import { SmartTableData } from '../../../@core/data/smart-table';
 
 @Component({
-  selector: 'ngx-smart-table',
-  templateUrl: './smart-table.component.html',
-  styleUrls: ['./smart-table.component.scss'],
+  selector: 'ngx-messages',
+  templateUrl: './messages.component.html',
+  styleUrls: ['./messages.component.scss'],
 })
-export class SmartTableComponent {
-
-  markets = [
-    {value: 0, title: 'A股'},
-    {value: 1, title: '港股'},
-    {value: 2, title: '美股'},
-    {value: 3, title: 'A股股指'},
-    {value: 4, title: '港股股指'},
-    {value: 5, title: '美股股指'}
-  ];
+export class MessagesComponent {
 
   settings = {
     add: {
@@ -41,71 +32,52 @@ export class SmartTableComponent {
     columns: {
       id: {
         title: 'ID',
-        type: 'number',
         editable: false,
         filter: false
       },
-      name: {
+      stock: {
         title: '名称',
-        type: 'string',
-        filter: false
+        editable: false,
+        filter: false,
+        valuePrepareFunction: (stock: any) => { 
+          return stock? stock.code + " " + stock.name :""; 
+        }
+      },
+      date: {
+        title: '日期',
+        editable: false,
+        filter: false,
+        valuePrepareFunction: (date: any) => { 
+          return date? new DatePipe('en-US').transform(date, 'yyyy-MM-dd') :""; 
+        }
+      },
+      time: {
+        title: '时间',
+        editable: false,
+        filter: false,
+      },
+      action: {
+        title: '提示',
+        editable: false,
+        filter: false,
       },
       price: {
-        title: '价格(元)',
-        type: 'number',
-        filter: false
-      },
-      listprice: {
-        title: '原价(元)',
-        type: 'number',
-        filter: false
-      },
-      period: {
-        title: '有效期(天)',
-        type: 'number',
-        filter: false
-      },
-      limit: {
-        title: '订阅数(个)',
-        type: 'number',
-        filter: false
-      },
-      description: {
-        title: '描述',
-        type: 'string',
+        title: '价格',
+        editable: false,
         filter: false,
-        editor: {
-          type: 'textarea',
-        }
-      },
-      memo: {
-        title: '副标题',
-        type: 'string',
-        filter: false
-      },
-      market: {
-        title: '市场',
-        type: 'number',
-        filter: false,
-        editor: {
-          type: 'list',
-          config: {
-            list: this.markets
-          }
-        },
-        valuePrepareFunction: (market) => {
-          return this.getMarketName(market);
-        }
       },
     },
     actions: {
-      columnTitle: '操作'
+      columnTitle: '操作',
+      add: true,
+      edit: true,
+      delete: true,
     }
   };
 
   source: DataSource ;
 
-  constructor(private service: ProductData) {
+  constructor(private service: MessageData) {
     this.source = service.gridDataSource;
   }
 
@@ -147,19 +119,6 @@ export class SmartTableComponent {
       event.confirm.resolve(event.newData);
     } else {
       event.confirm.reject();
-    }
-  }
-
-  getMarketName(market: number) {
-    //console.log("market:" + market);
-    if (market == null) {
-      return;
-    }
-    let m = this.markets.find(element => element.value==market );
-    if (m) {
-      return m.title;
-    } else {
-      return market;
     }
   }
 }
