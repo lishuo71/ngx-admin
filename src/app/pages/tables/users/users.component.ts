@@ -39,17 +39,20 @@ export class UserComponent {
       userName: {
         title: '登录名',
         type: 'string',
-        filter: false
+        filter: false,
+        editable: false,
       },
       realName: {
         title: '实名/昵称',
         type: 'string',
-        filter: false
+        filter: true,
+        editable: false,
       },
       lastLogin: {
         title: '最后登录时间',
         type: 'string',
         filter: false,
+        editable: false,
         valuePrepareFunction: (lastLoginTime: any) => { 
           return lastLoginTime? new DatePipe('en-US').transform(lastLoginTime, 'yyyy-MM-dd HH:mm:ss') :""; 
         }
@@ -57,6 +60,7 @@ export class UserComponent {
       headimgurl: {
         title: '头像',
         filter: false,
+        editable: false,
         type: 'html',
         valuePrepareFunction: (images) => {
           return `<img class='table-thumbnail-img' src="${images}"/>`
@@ -65,13 +69,14 @@ export class UserComponent {
       phone: {
         title: '手机',
         type: 'string',
-        filter: false
+        filter: true,
+        editable: true,
       },
     },
     actions: {
       columnTitle: '操作',
       add: true,
-      edit: false,
+      edit: true,
       delete: false,
     }
   };

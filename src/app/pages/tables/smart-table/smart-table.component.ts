@@ -100,6 +100,9 @@ export class SmartTableComponent {
     },
     actions: {
       columnTitle: '操作'
+    },
+    pager: {
+      perPage: 50
     }
   };
 

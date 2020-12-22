@@ -94,6 +94,9 @@ export class CodesComponent {
     },
     actions: {
       columnTitle: '操作'
+    },
+    pager: {
+      perPage: 50
     }
   };
 

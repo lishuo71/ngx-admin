@@ -34,12 +34,15 @@ export class HistoryComponent {
       id: {
         title: 'ID',
         editable: false,
-        filter: false
+        filter: false,
+        valuePrepareFunction: (cell,row) => { 
+          return row.message.id; 
+        }
       },
       stock: {
         title: '名称',
         editable: false,
-        filter: false,
+        filter: true,
         valuePrepareFunction: (cell,row) => { 
           return row.message.stock.code + " " + row.message.stock.name; 
         }
@@ -79,7 +82,7 @@ export class HistoryComponent {
       userId: {
         title: '用户',
         editable: false,
-        filter: false,
+        filter: true,
         valuePrepareFunction: (cell,row) => { 
           return row.login.realName; 
         }
@@ -95,9 +98,12 @@ export class HistoryComponent {
     },
     actions: {
       columnTitle: '操作',
-      add: true,
-      edit: true,
-      delete: true,
+      add: false,
+      edit: false,
+      delete: false,
+    },
+    pager: {
+      perPage: 50
     }
   };
 

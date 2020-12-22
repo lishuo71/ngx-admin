@@ -29,22 +29,6 @@ export class OrderComponent {
       deleteButtonContent: '<i class="nb-trash"></i>',
       confirmDelete: true,
     },
-    /*
-    `tradeno` char(32) CHARACTER SET latin1 NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `product_id` int(11) NOT NULL,
-  `amount` int(11) NOT NULL DEFAULT '0',
-  `payment` timestamp NULL DEFAULT NULL,
-  `payamount` int(11) DEFAULT NULL,
-  `transactionid` varchar(32) DEFAULT NULL,
-  `expiretime` timestamp NULL DEFAULT NULL,
-  `pay_start_time` timestamp NULL DEFAULT NULL,
-  `wx_result` varchar(1024) DEFAULT NULL,
-  `pay_method` varchar(10) DEFAULT NULL,
-  `product_name` varchar(128) DEFAULT NULL,
-  `period` int(1) DEFAULT NULL,
-  `limits` int(1) DEFAULT NULL,
-  */
     columns: {
       tradeno: {
         title: '订单号',
@@ -54,7 +38,7 @@ export class OrderComponent {
       login: {
         title: '用户',
         editable: false,
-        filter: false,
+        filter: true,
         valuePrepareFunction: (user: any) => { 
           return user? user.realName :""; 
         }
@@ -104,9 +88,12 @@ export class OrderComponent {
     },
     actions: {
       columnTitle: '操作',
-      add: true,
+      add: false,
       edit: false,
       delete: false,
+    },
+    pager: {
+      perPage: 50
     }
   };
 

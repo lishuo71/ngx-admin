@@ -38,9 +38,9 @@ export class MessagesComponent {
       stock: {
         title: '名称',
         editable: false,
-        filter: false,
-        valuePrepareFunction: (stock: any) => { 
-          return stock? stock.code + " " + stock.name :""; 
+        filter: true,
+        valuePrepareFunction: (cell,row) => { 
+          return row.stockDTO.code + " " + row.stockDTO.name; 
         }
       },
       date: {
@@ -62,16 +62,19 @@ export class MessagesComponent {
         filter: false,
       },
       price: {
-        title: '价格',
+        title: '价格(元)',
         editable: false,
         filter: false,
       },
     },
     actions: {
       columnTitle: '操作',
-      add: true,
-      edit: true,
-      delete: true,
+      add: false,
+      edit: false,
+      delete: false,
+    },
+    pager: {
+      perPage: 50
     }
   };
 

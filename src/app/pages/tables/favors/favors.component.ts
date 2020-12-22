@@ -37,12 +37,15 @@ export class FavorComponent {
       id: {
         title: 'ID',
         editable: false,
-        filter: false
+        filter: false,
+        valuePrepareFunction: (cell,row) => { 
+          return row.favors.id; 
+        }
       },
       userId: {
         title: '用户',
         editable: false,
-        filter: false,
+        filter: true,
         valuePrepareFunction: (cell,row) => { 
           return row.login.realName; 
         }
@@ -50,7 +53,7 @@ export class FavorComponent {
       stock: {
         title: '服务名称',
         editable: false,
-        filter: false,
+        filter: true,
         valuePrepareFunction: (cell,row) => { 
           return row.favors.stock.code + " "+ row.favors.stock.name; 
         }
@@ -87,9 +90,12 @@ export class FavorComponent {
     },
     actions: {
       columnTitle: '操作',
-      add: true,
-      edit: true,
+      add: false,
+      edit: false,
       delete: true,
+    },
+    pager: {
+      perPage: 50
     }
   };
 
@@ -101,7 +107,7 @@ export class FavorComponent {
 
   onDeleteConfirm(event): void {
     if (window.confirm('确定要删除本条数据吗？')) {
-      this.service.delete(event.data.id).subscribe((result)=>{
+      this.service.delete(event.data.favors.id).subscribe((result)=>{
         console.log("delete result: " + JSON.stringify(result));
         if (result.code != 0) {
           alert("删除失败：" + result.message);
